@@ -1342,11 +1342,7 @@ export default function PapersClient({
           openAuthorModal(paper.authorProfiles, paper.primaryAuthorId)
         }
         relatedPapers={relatedPapers}
-        onRelatedSelect={openPaperInModal}
-        onRelatedAuthorSelect={(paper) =>
-          openAuthorModal(paper.authorProfiles, paper.primaryAuthorId)
-        }
-        commentText={commentText}
+        onRelatedSelect={openPaperInModal}\ncommentText={commentText}
         onCommentChange={setCommentText}
         onCommentSubmit={handleComment}
         isAuthenticated={isAuthenticated}
@@ -1505,5 +1501,6 @@ export default function PapersClient({
     </div>
   );
 }
+
 
 
