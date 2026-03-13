@@ -46,9 +46,9 @@ type PapersClientProps = {
 
 type AuthorProfile = {
   id?: number;
-  first_name?: string;
-  last_name?: string;
-  username?: string;
+  first_name?: string | null;
+  last_name?: string | null;
+  username?: string | null;
   profile_picture?: string | null;
 };
 
@@ -1505,4 +1505,5 @@ export default function PapersClient({
     </div>
   );
 }
+
 
