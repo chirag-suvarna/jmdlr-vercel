@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import PaperCard from "@/components/PaperCard";
 import PaperDetailModal from "@/components/paper/PaperDetailModal";
-import type { CommentItem } from "@/components/paper/types";
+import type { CommentItem, PaperReferenceItem } from "@/components/paper/types";
 import AuthorList from "@/components/authors/AuthorList";
 import AuthorHeader from "@/components/authors/AuthorHeader";
 import AuthorMetrics from "@/components/authors/AuthorMetrics";
@@ -44,17 +44,17 @@ type LatestPapersProps = {
 
 type AuthorProfile = {
   id?: number;
-  first_name?: string;
-  last_name?: string;
-  username?: string;
+  first_name?: string | null;
+  last_name?: string | null;
+  username?: string | null;
   profile_picture?: string | null;
 };
 
 type AuthorDetails = {
   id: number;
-  username?: string;
-  first_name?: string;
-  last_name?: string;
+  username?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
   bio?: string | null;
   affiliation?: string | null;
   research_interests?: string[] | null;
@@ -214,9 +214,9 @@ export default function LatestPapers({ papers }: LatestPapersProps) {
           });
           if (!response.ok) return;
           const payload = (await response.json()) as {
-            first_name?: string;
-            last_name?: string;
-            username?: string;
+            first_name?: string | null;
+            last_name?: string | null;
+            username?: string | null;
             profile_picture?: string | null;
           };
           const fullName = [payload.first_name, payload.last_name]
@@ -618,10 +618,36 @@ export default function LatestPapers({ papers }: LatestPapersProps) {
     return response;
   };
 
-  const openPaperInModal = (paper: LatestPaper) => {
-    if (!activePaper || paper.id === activePaper.id) return;
-    setPaperHistory((prev) => [...prev, activePaper]);
-    setActivePaper(paper);
+  const openPaperInModal = (paper: PaperReferenceItem) => {
+    const full =
+      items.find((item) => item.id === paper.id) ??
+      (activePaper && activePaper.id === paper.id ? activePaper : null);
+
+    const resolved: LatestPaper = full ?? {
+      id: paper.id,
+      title: paper.title,
+      abstract: "",
+      tags: [],
+      author: paper.author,
+      authorProfiles: paper.authorProfiles ?? [],
+      primaryAuthorId: paper.primaryAuthorId ?? null,
+      publishedDate: null,
+      doi: null,
+      pdfUrl: null,
+      views: 0,
+      downloads: 0,
+      likes: 0,
+      comments: 0,
+      bookmarks: 0,
+      liked: false,
+      bookmarked: false,
+    };
+
+    if (activePaper && resolved.id === activePaper.id) return;
+    if (activePaper) {
+      setPaperHistory((prev) => [...prev, activePaper]);
+    }
+    setActivePaper(resolved);
   };
 
   const goBackToPreviousPaper = () => {
@@ -1067,4 +1093,8 @@ export default function LatestPapers({ papers }: LatestPapersProps) {
     </section>
   );
 }
+
+
+
+
 
